@@ -31,11 +31,14 @@ public class Paddle : MonoBehaviour
         Bounds bounds = boxCollider.bounds;
         float maxZ = bounds.max.z;
         float minZ = bounds.min.z;
+        float otherZ = other.transform.position.z;
+        float percentAlong = (otherZ - minZ) / (maxZ - minZ);
         
         Debug.Log($"maxZ = {maxZ}, minZ = {minZ}");
-        Debug.Log($"x pos of ball is {other.transform.position.x}");
+        Debug.Log($"z pos of ball is {otherZ}");
+        Debug.Log($"The percent of the way it is along: {percentAlong}");
         
-        Quaternion rotation = Quaternion.Euler(60f, 0f, 0f);
+        Quaternion rotation = Quaternion.Euler((-60f + (120f * percentAlong)), 0f, 0f);
         Vector3 bounceDirection = rotation * Vector3.up;
         
         Debug.Log($"bounceDirection: {bounceDirection}");
