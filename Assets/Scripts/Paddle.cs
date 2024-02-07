@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Vector3 = UnityEngine.Vector3;
 
 public class Paddle : MonoBehaviour
 {
-    public float unitsPerSecond = 3;
+    public int paddle = 1;
+    public float unitsPerSecond = .3f;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,34 +16,27 @@ public class Paddle : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        float verticalValue = Input.GetAxis("Vertical");
-        Vector3 force = Vector3.forward * verticalValue;
+
+        float verticalValue;
+        if (paddle == 1)
+        {
+            verticalValue = Input.GetAxis("Paddle 1");
+        }
+        else
+        {
+            verticalValue = Input.GetAxis("Paddle 2");
+        }
+        
+        Vector3 force = Vector3.up * (unitsPerSecond * verticalValue);
+        // Debug.Log($"Force on key press: {force}");
 
         Rigidbody rigidbody = GetComponent<Rigidbody>();
-        rigidbody.AddForce(force, ForceMode.Force);
-    }
+        // rigidbody.AddForce(force, ForceMode.Acceleration);
 
-    private void OnCollisionEnter(Collision other)
-    {
-        Debug.Log($"We hit {other.gameObject.name}");
-
-        BoxCollider boxCollider = GetComponent<BoxCollider>();
-        Bounds bounds = boxCollider.bounds;
-        float maxZ = bounds.max.z;
-        float minZ = bounds.min.z;
-        float otherZ = other.transform.position.z;
-        float percentAlong = (otherZ - minZ) / (maxZ - minZ);
-        
-        Debug.Log($"maxZ = {maxZ}, minZ = {minZ}");
-        Debug.Log($"z pos of ball is {otherZ}");
-        Debug.Log($"The percent of the way it is along: {percentAlong}");
-        
-        Quaternion rotation = Quaternion.Euler((-60f + (120f * percentAlong)), 0f, 0f);
-        Vector3 bounceDirection = rotation * Vector3.up;
-        
-        Debug.Log($"bounceDirection: {bounceDirection}");
-        
-        Rigidbody rigidbody = other.rigidbody;
-        rigidbody.AddForce(bounceDirection * 1000f, ForceMode.Force);
+        float yPos = rigidbody.transform.position.y;
+        if ((yPos >= 6.05 && verticalValue < 0) || (yPos <= -6.7 && verticalValue > 0) || (yPos < 6.05 && yPos > -6.7))
+        {
+            rigidbody.transform.position += Vector3.up * (unitsPerSecond * verticalValue);
+        }
     }
 }
