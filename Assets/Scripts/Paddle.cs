@@ -27,7 +27,7 @@ public class Paddle : MonoBehaviour
             verticalValue = Input.GetAxis("Paddle 2");
         }
         
-        Vector3 force = Vector3.up * (unitsPerSecond * verticalValue);
+        // Vector3 force = Vector3.up * (unitsPerSecond * verticalValue);
         // Debug.Log($"Force on key press: {force}");
 
         Rigidbody rigidbody = GetComponent<Rigidbody>();
