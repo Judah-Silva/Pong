@@ -3,16 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Ball : MonoBehaviour
 {
-    public TextMeshProUGUI score1;
-    public TextMeshProUGUI score2;
+    public Text score1;
+    public Text score2;
     public GameObject leftPaddle;
     public GameObject rightPaddle;
     private int hitCounter = 0;
     private float ballSpeed = 10;
-    private float speedModifier = 1.25f;
+    private float speedModifier = 1.75f;
     private Rigidbody rb;
     private int player1Score = 0;
     private int player2Score = 0;
@@ -76,6 +77,11 @@ public class Ball : MonoBehaviour
             Vector3 bounceDirection = rotation * new Vector3(paddle, 0, 0);
             
             rb.velocity = bounceDirection * (ballSpeed + (speedModifier * hitCounter));
+
+            AudioSource audioSource = GetComponent<AudioSource>();
+            Debug.Log(speedModifier * hitCounter);
+            audioSource.pitch = 1 + (speedModifier * hitCounter) / 15f;
+            audioSource.Play();
         }
     }
 
@@ -92,7 +98,11 @@ public class Ball : MonoBehaviour
             else
             {
                 Debug.Log($"Player 2 scored! Game score: {player1Score} : {player2Score}.");
+                Animator animator = score2.GetComponent<Animator>();
+                Debug.Log(animator);
                 score2.text = player2Score.ToString();
+                animator.SetBool("Score Changed", true);
+                Invoke("ResetAnimations", 0.1f);
             }
             ResetBall();
         } else if (other.gameObject.name == "Right Score")
@@ -106,7 +116,11 @@ public class Ball : MonoBehaviour
             else
             {
                 Debug.Log($"Player 1 scored! Game score: {player1Score} : {player2Score}.");
+                Animator animator = score1.GetComponent<Animator>();
+                Debug.Log(animator);
                 score1.text = player1Score.ToString();
+                animator.SetBool("Score Changed", true);
+                Invoke("ResetAnimations", 0.1f);
             }
             ResetBall();
         } else if (other.gameObject.CompareTag("Ball Slow Down"))
@@ -127,6 +141,15 @@ public class Ball : MonoBehaviour
             }
             other.gameObject.SetActive(false);
         }
+    }
+
+    void ResetAnimations()
+    {
+        Animator animator = score1.GetComponent<Animator>();
+        Animator animator2 = score2.GetComponent<Animator>();
+        
+        animator.SetBool("Score Changed", false);
+        animator2.SetBool("Score Changed", false);
     }
 
     void ResetGame()

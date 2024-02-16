@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PowerupManager : MonoBehaviour
 {
     public GameObject ballSlowDown;
     public GameObject paddleSizeIncrease;
-    public TextMeshProUGUI player1ScoreText;
-    public TextMeshProUGUI player2ScoreText;
+    public Text player1ScoreText;
+    public Text player2ScoreText;
     private GameObject ballSlowDownCopy;
     private GameObject paddleSizeIncreaseCopy;
     private bool firstPowerup = false;

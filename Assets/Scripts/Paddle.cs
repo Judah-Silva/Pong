@@ -35,7 +35,7 @@ public class Paddle : MonoBehaviour
 
         float yPos = rigidbody.transform.position.y;
         float bound = (8.5f - gameObject.transform.localScale.z / 2f) - 0.00001f;
-        Debug.Log(bound);
+        // Debug.Log(bound);
         if ((yPos >= (bound) && verticalValue < 0) || (yPos <= (-bound) && verticalValue > 0) || (yPos < bound && yPos > -bound))
         {
             rigidbody.transform.position += Vector3.up * (unitsPerSecond * verticalValue);
