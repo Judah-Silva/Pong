@@ -8,6 +8,8 @@ public class Ball : MonoBehaviour
 {
     public TextMeshProUGUI score1;
     public TextMeshProUGUI score2;
+    public GameObject leftPaddle;
+    public GameObject rightPaddle;
     private int hitCounter = 0;
     private float ballSpeed = 10;
     private float speedModifier = 1.25f;
@@ -15,6 +17,7 @@ public class Ball : MonoBehaviour
     private int player1Score = 0;
     private int player2Score = 0;
     private int scored = 0;
+    private int lastHit = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -44,7 +47,7 @@ public class Ball : MonoBehaviour
     private void ResetBall()
     {
         rb.velocity = new Vector3(0, 0, 0);
-        transform.position = new Vector3(16.15f, 0, 5);
+        transform.position = new Vector3(0, 0, 0);
         hitCounter = 0;
         Invoke(nameof(StartRound), 2f);
     }
@@ -62,10 +65,12 @@ public class Ball : MonoBehaviour
             float otherY = transform.position.y;
             float percentAlong = (otherY - minY) / (maxY - minY);
             
-            int paddle = -1;
-            if (other.gameObject.name == "Paddle 1")
+            int paddle = 1;
+            lastHit = 0;
+            if (other.gameObject.name == "Paddle 2")
             {
-                paddle = 1;
+                paddle = -1;
+                lastHit = 1;
             }
             Quaternion rotation = Quaternion.Euler(0f, 0f, paddle * (-60f + (120f * percentAlong)));
             Vector3 bounceDirection = rotation * new Vector3(paddle, 0, 0);
@@ -89,6 +94,7 @@ public class Ball : MonoBehaviour
                 Debug.Log($"Player 2 scored! Game score: {player1Score} : {player2Score}.");
                 score2.text = player2Score.ToString();
             }
+            ResetBall();
         } else if (other.gameObject.name == "Right Score")
         {
             player1Score++;
@@ -102,14 +108,31 @@ public class Ball : MonoBehaviour
                 Debug.Log($"Player 1 scored! Game score: {player1Score} : {player2Score}.");
                 score1.text = player1Score.ToString();
             }
+            ResetBall();
+        } else if (other.gameObject.CompareTag("Ball Slow Down"))
+        {
+            print("Hit Ball Slow Down Powerup");
+            hitCounter = 0;
+            other.gameObject.SetActive(false);
+        } else if (other.gameObject.CompareTag("Paddle Size Increase"))
+        {
+            print("Hit Paddle Size Increase Powerup");
+            if (lastHit == 0)
+            {
+                leftPaddle.transform.localScale = new Vector3(1, 1, 7);
+            }
+            else
+            {
+                rightPaddle.transform.localScale = new Vector3(1, 1, 7);
+            }
+            other.gameObject.SetActive(false);
         }
-        ResetBall();
     }
 
     void ResetGame()
     {
         rb.velocity = new Vector3(0, 0, 0);
-        transform.position = new Vector3(16.15f, 0, 5);
+        transform.position = new Vector3(0, 0, 0);
         hitCounter = 0;
         if (scored == 1)
         {
@@ -124,6 +147,8 @@ public class Ball : MonoBehaviour
         scored = 0;
         player1Score = 0;
         player2Score = 0;
+        leftPaddle.transform.localScale = new Vector3(1, 1, 5);
+        rightPaddle.transform.localScale = new Vector3(1, 1, 5);
         Invoke(nameof(StartRound), 5f);
     }
 }
